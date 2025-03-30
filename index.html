@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe - Neon Edition</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #000; text-align: center; color: #fff; overflow: hidden; }
+        h1 { margin: 20px; font-size: 32px; text-shadow: 0 0 10px cyan; }
+        .game-container {
+            width: 320px;
+            margin: 20px auto;
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            gap: 10px;
+            background: linear-gradient(45deg, #00f, #0ff);
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px cyan;
+        }
+        .cell {
+            width: 100px;
+            height: 100px;
+            background: #111;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            color: #0ff;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 8px;
+            box-shadow: 0 0 10px cyan;
+            transition: transform 0.3s, background 0.3s, color 0.3s;
+        }
+        .cell:hover { background: #222; }
+        .cell.x { color: #ff00ff; text-shadow: 0 0 10px #ff00ff; }
+        .cell.o { color: #00ff00; text-shadow: 0 0 10px #00ff00; }
+        .winner { font-size: 24px; margin-top: 20px; text-shadow: 0 0 10px lime; }
+        .reset-btn, .play-computer-btn {
+            margin-top: 10px;
+            padding: 10px 20px;
+            font-size: 18px;
+            color: #fff;
+            background: #00f;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            box-shadow: 0 0 10px cyan;
+            transition: 0.3s;
+        }
+        .reset-btn:hover, .play-computer-btn:hover { background: #0ff; }
+        .active-mode { background: #ff6600 !important; }
+    </style>
+</head>
+<body>
+    <h1>Tic Tac Toe - Neon Edition</h1>
+    <div class="game-container" id="board"></div>
+    <p class="winner" id="winnerText"></p>
+    <button class="reset-btn" onclick="resetGame()">Restart Game</button>
+    <button class="play-computer-btn" id="playComputerBtn" onclick="toggleComputerMode()">Play with Computer</button>
+   
+   
+   <br> <!-- Add this inside the body, below the buttons -->
+<div class="ad-container">
+    <p>Advertisement</p>
+    <ins class="adsbygoogle"
+        style="display:block; width:300px; height:250px;"
+        data-ad-client="ca-pub-8067895760577130"
+        data-ad-slot="YYYYYYYYYY">
+    </ins>
+</div>
+
+<!-- Google Ads Script -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1"></script>
+    <script>
+        const board = document.getElementById("board");
+        const winnerText = document.getElementById("winnerText");
+        const playComputerBtn = document.getElementById("playComputerBtn");
+        let cells = Array(9).fill(null);
+        let currentPlayer = "X";
+        let gameActive = true;
+        let computerMode = false;
+
+        function createBoard() {
+            board.innerHTML = "";
+            cells.forEach((cell, index) => {
+                const cellElement = document.createElement("div");
+                cellElement.classList.add("cell");
+                cellElement.dataset.index = index;
+                cellElement.innerText = cell;
+                if (cell) cellElement.classList.add(cell.toLowerCase());
+                cellElement.addEventListener("click", () => handleCellClick(index));
+                board.appendChild(cellElement);
+            });
+        }
+
+        function handleCellClick(index) {
+            if (cells[index] || !gameActive) return;
+            cells[index] = currentPlayer;
+            checkWinner();
+            currentPlayer = currentPlayer === "X" ? "O" : "X";
+            createBoard();
+            if (computerMode && currentPlayer === "O" && gameActive) {
+                setTimeout(computerMove, 500);
+            }
+        }
+
+        function computerMove() {
+            let bestMove = findBestMove();
+            if (bestMove !== undefined) {
+                cells[bestMove] = "O";
+                checkWinner();
+                currentPlayer = "X";
+                createBoard();
+            }
+        }
+
+        function findBestMove() {
+            let availableMoves = cells.map((cell, index) => (cell === null ? index : null)).filter(v => v !== null);
+            for (let move of availableMoves) {
+                cells[move] = "O";
+                if (checkInstantWin("O")) {
+                    cells[move] = null;
+                    return move;
+                }
+                cells[move] = null;
+            }
+            for (let move of availableMoves) {
+                cells[move] = "X";
+                if (checkInstantWin("X")) {
+                    cells[move] = null;
+                    return move;
+                }
+                cells[move] = null;
+            }
+            return availableMoves[Math.floor(Math.random() * availableMoves.length)];
+        }
+
+        function checkInstantWin(player) {
+            return [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8],
+                [0, 3, 6], [1, 4, 7], [2, 5, 8],
+                [0, 4, 8], [2, 4, 6]
+            ].some(pattern => pattern.every(index => cells[index] === player));
+        }
+
+        function checkWinner() {
+            const winPatterns = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8],
+                [0, 3, 6], [1, 4, 7], [2, 5, 8],
+                [0, 4, 8], [2, 4, 6]
+            ];
+            for (let pattern of winPatterns) {
+                const [a, b, c] = pattern;
+                if (cells[a] && cells[a] === cells[b] && cells[a] === cells[c]) {
+                    gameActive = false;
+                    winnerText.innerText = `Winner: ${cells[a]}`;
+                    launchConfetti();
+                    return;
+                }
+            }
+            if (!cells.includes(null)) {
+                gameActive = false;
+                winnerText.innerText = "It's a Draw!";
+            }
+        }
+
+        function launchConfetti() {
+            confetti({ particleCount: 100, spread: 70, origin: { x: 0 } });
+            confetti({ particleCount: 100, spread: 70, origin: { x: 1 } });
+        }
+
+        function resetGame() {
+            cells = Array(9).fill(null);
+            currentPlayer = "X";
+            gameActive = true;
+            winnerText.innerText = "";
+            createBoard();
+        }
+        
+        function toggleComputerMode() {
+            computerMode = !computerMode;
+            playComputerBtn.classList.toggle("active-mode", computerMode);
+            resetGame();
+        }
+
+        createBoard();
+    </script>
+</body>
+</html>
