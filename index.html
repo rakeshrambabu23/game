@@ -64,7 +64,7 @@
     <p class="winner" id="winnerText"></p>
     <button class="reset-btn" onclick="resetGame()">Restart Game</button>
     <button class="play-computer-btn" id="playComputerBtn" onclick="toggleComputerMode()">Play with Computer</button>
-   
+    
     <br> <br>
     <div class="ad-container" style="text-align: center; margin-top: 20px;">
         <p>Advertisement</p>
@@ -75,26 +75,25 @@
              data-ad-format="auto"
              data-full-width-responsive="true"></ins>
     </div>
-
-    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
 
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1"></script>
-
-    <!-- 🔊 Sound Effects -->
-    <audio id="clickSound" src="click.mp3"></audio>
-    <audio id="winSound" src="win.mp3"></audio>
-
     <script>
         const board = document.getElementById("board");
         const winnerText = document.getElementById("winnerText");
         const playComputerBtn = document.getElementById("playComputerBtn");
-        const clickSound = document.getElementById("clickSound");
-        const winSound = document.getElementById("winSound");
-
         let cells = Array(9).fill(null);
         let currentPlayer = "X";
         let gameActive = true;
         let computerMode = false;
+
+        // Sound effects
+        const clickSound = new Audio("https://www.fesliyanstudios.com/play-mp3/394");
+        const winSound = new Audio("https://www.fesliyanstudios.com/play-mp3/438");
+        const drawSound = new Audio("https://www.fesliyanstudios.com/play-mp3/403");
 
         function createBoard() {
             board.innerHTML = "";
@@ -111,8 +110,8 @@
 
         function handleCellClick(index) {
             if (cells[index] || !gameActive) return;
+            clickSound.play();
             cells[index] = currentPlayer;
-            playClickSound();
             checkWinner();
             currentPlayer = currentPlayer === "X" ? "O" : "X";
             createBoard();
@@ -121,21 +120,11 @@
             }
         }
 
-        function playClickSound() {
-            clickSound.currentTime = 0;
-            clickSound.play();
-        }
-
-        function playWinSound() {
-            winSound.currentTime = 0;
-            winSound.play();
-        }
-
         function computerMove() {
             let bestMove = findBestMove();
             if (bestMove !== undefined) {
+                clickSound.play();
                 cells[bestMove] = "O";
-                playClickSound();
                 checkWinner();
                 currentPlayer = "X";
                 createBoard();
@@ -182,14 +171,15 @@
                 if (cells[a] && cells[a] === cells[b] && cells[a] === cells[c]) {
                     gameActive = false;
                     winnerText.innerText = `Winner: ${cells[a]}`;
+                    winSound.play();
                     launchConfetti();
-                    playWinSound();
                     return;
                 }
             }
             if (!cells.includes(null)) {
                 gameActive = false;
                 winnerText.innerText = "It's a Draw!";
+                drawSound.play();
             }
         }
 
@@ -204,6 +194,12 @@
             gameActive = true;
             winnerText.innerText = "";
             createBoard();
+        }
+
+        function toggleComputerMode() {
+            computerMode = !computerMode;
+            playComputerBtn.classList.toggle("active-mode", computerMode);
+            resetGame();
         }
 
         createBoard();
