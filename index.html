@@ -56,7 +56,8 @@
         .active-mode { background: #ff6600 !important; }
     </style>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8067895760577130"
-    crossorigin="anonymous"></script>
+    crossorigin="anonymous">
+</script>
 </head>
 <body>
     <h1>Tic Tac Toe - Neon Edition</h1>
@@ -64,22 +65,24 @@
     <p class="winner" id="winnerText"></p>
     <button class="reset-btn" onclick="resetGame()">Restart Game</button>
     <button class="play-computer-btn" id="playComputerBtn" onclick="toggleComputerMode()">Play with Computer</button>
-    
-    <br> <br>
-    <div class="ad-container" style="text-align: center; margin-top: 20px;">
-        <p>Advertisement</p>
-        <ins class="adsbygoogle"
-             style="display:block"
-             data-ad-client="ca-pub-8067895760577130"
-             data-ad-slot="2490264095"
-             data-ad-format="auto"
-             data-full-width-responsive="true"></ins>
-    </div>
-    
-    <script>
-        (adsbygoogle = window.adsbygoogle || []).push({});
-    </script>
+   
+   
+   <br> <br><!-- Add this inside the body, below the buttons -->
+   <div class="ad-container" style="text-align: center; margin-top: 20px;">
+    <p>Advertisement</p>
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-8067895760577130"
+         data-ad-slot="2490264095"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+</div>
 
+
+
+<script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1"></script>
     <script>
         const board = document.getElementById("board");
@@ -105,7 +108,6 @@
 
         function handleCellClick(index) {
             if (cells[index] || !gameActive) return;
-            clickSound.play();
             cells[index] = currentPlayer;
             checkWinner();
             currentPlayer = currentPlayer === "X" ? "O" : "X";
@@ -118,7 +120,6 @@
         function computerMove() {
             let bestMove = findBestMove();
             if (bestMove !== undefined) {
-                clickSound.play();
                 cells[bestMove] = "O";
                 checkWinner();
                 currentPlayer = "X";
@@ -165,8 +166,7 @@
                 const [a, b, c] = pattern;
                 if (cells[a] && cells[a] === cells[b] && cells[a] === cells[c]) {
                     gameActive = false;
-                    winnerText.innerText = `Winner: ${cells[a]}`;
-                    winSound.play();
+                    winnerText.innerText = Winner: ${cells[a]};
                     launchConfetti();
                     return;
                 }
@@ -174,7 +174,6 @@
             if (!cells.includes(null)) {
                 gameActive = false;
                 winnerText.innerText = "It's a Draw!";
-                drawSound.play();
             }
         }
 
@@ -190,7 +189,7 @@
             winnerText.innerText = "";
             createBoard();
         }
-
+        
         function toggleComputerMode() {
             computerMode = !computerMode;
             playComputerBtn.classList.toggle("active-mode", computerMode);
